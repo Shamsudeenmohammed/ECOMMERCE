@@ -230,8 +230,8 @@ LOGGING = {
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Paystack configuration (from environment variables)
-PAYSTACK_SECRET_KEY = os.environ.get('PAYSTACK_SECRET_KEY', '"sk_test_c3d995d2ab8864741e43b8fa652792eef55477aa"')
-PAYSTACK_PUBLIC_KEY = os.environ.get('PAYSTACK_PUBLIC_KEY', '"pk_test_88e8cfcfab1882455cd240374a19150557542a9f"')
+PAYSTACK_SECRET_KEY = os.environ.get('PAYSTACK_SECRET_KEY', 'sk_test_c3d995d2ab8864741e43b8fa652792eef55477aa')
+PAYSTACK_PUBLIC_KEY = os.environ.get('PAYSTACK_PUBLIC_KEY', 'pk_test_88e8cfcfab1882455cd240374a19150557542a9f')
 PAYSTACK_WEBHOOK_SECRET = os.environ.get('PAYSTACK_WEBHOOK_SECRET', 'whsec_xxxxxxxxx')
 
 # Jazzmin settings (optional)

@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Product, Category
+from django.http import JsonResponse
 
 
 def product_list(request, category_slug=None):
@@ -20,7 +21,19 @@ def product_list(request, category_slug=None):
 
 
 def product_detail(request, slug):
-    product = get_object_or_404(Product, slug=slug, is_active=True)
+    product = get_object_or_404(
+        Product.objects.prefetch_related('images'),
+        slug=slug,
+        is_active=True
+    )
+
+    # 🔄 AJAX request: return stock only
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({
+            'stock': product.stock,
+            'is_active': product.is_active
+        })
+
     images = product.images.all()
 
     return render(request, 'products/product_detail.html', {

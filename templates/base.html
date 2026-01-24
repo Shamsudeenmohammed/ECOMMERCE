@@ -3,21 +3,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}MyShop{% endblock %}</title>
 
-  {% if messages %}
-<div class="messages-container">
-    {% for message in messages %}
-        <div class="message {{ message.tags }}">
-            {{ message }}
-        </div>
-    {% endfor %}
-</div>
-{% endif %}
-
+{% block extra_css %}
+<link rel="preload" href="{% static 'css/main.css' %}" as="style">
+<link rel="stylesheet" href="{% static 'css/main.css' %}">
+{% endblock %}
 
   <style>
-    /* ===== RESET ===== */
+    /* ===============================
+       GLOBAL RESET
+       =============================== */
     * {
       margin: 0;
       padding: 0;
@@ -33,7 +30,13 @@
       flex-direction: column;
     }
 
-    /* ===== HEADER ===== */
+    a {
+      text-decoration: none;
+    }
+
+    /* ===============================
+       HEADER
+       =============================== */
     .site-header {
       background: #0f172a;
       color: #fff;
@@ -42,20 +45,35 @@
       justify-content: space-between;
       align-items: center;
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
     }
 
     .logo a {
       font-size: 22px;
       font-weight: bold;
       color: #38bdf8;
-      text-decoration: none;
     }
 
-    /* ===== NAVIGATION ===== */
+    /* ===============================
+       NAVIGATION
+       =============================== */
     nav a {
       margin-left: 18px;
       color: #e5e7eb;
-      text-decoration: none;
       font-size: 15px;
       padding: 6px 10px;
       border-radius: 5px;
@@ -67,7 +85,20 @@
       color: #38bdf8;
     }
 
-    /* ===== MAIN CONTENT ===== */
+    .checkout-btn {
+      background: #22c55e;
+      color: #052e16;
+      font-weight: 600;
+    }
+
+    .checkout-btn:hover {
+      background: #16a34a;
+      color: #ecfdf5;
+    }
+
+    /* ===============================
+       MAIN CONTENT
+       =============================== */
     .container {
       flex: 1;
       padding: 30px;
@@ -76,17 +107,131 @@
       width: 100%;
     }
 
-    /* ===== FOOTER ===== */
-    .site-footer {
-      background: #e5e7eb;
-      text-align: center;
-      padding: 15px;
-      font-size: 14px;
-      color: #555;
-      border-top: 1px solid #d1d5db;
+    /* ===============================
+       DJANGO MESSAGES
+       =============================== */
+    .messages-container {
+      max-width: 1200px;
+      margin: 20px auto 0;
+      padding: 0 30px;
     }
 
-    /* ===== RESPONSIVE ===== */
+    .message {
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    .message.success {
+      background: #ecfdf5;
+      color: #065f46;
+      border-left: 5px solid #10b981;
+    }
+
+    .message.error {
+      background: #fef2f2;
+      color: #991b1b;
+      border-left: 5px solid #ef4444;
+    }
+
+    .message.warning {
+      background: #fffbeb;
+      color: #92400e;
+      border-left: 5px solid #f59e0b;
+    }
+
+    .message.info {
+      background: #eff6ff;
+      color: #1e40af;
+      border-left: 5px solid #3b82f6;
+    }
+
+    /* ===============================
+       FOOTER
+       =============================== */
+    .site-footer {
+      background: #020617;
+      color: #cbd5f5;
+      padding: 50px 30px 20px;
+      margin-top: 60px;
+    }
+
+    .footer-grid {
+      max-width: 1200px;
+      margin: auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 30px;
+    }
+
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .footer-brand img {
+      width: 40px;
+      height: 40px;
+      object-fit: contain;
+    }
+
+    .footer-brand span {
+      font-size: 20px;
+      font-weight: bold;
+      color: #38bdf8;
+    }
+
+    .footer-section h4 {
+      margin-bottom: 12px;
+      color: #ffffff;
+      font-size: 16px;
+    }
+
+    .footer-section p,
+    .footer-section a {
+      font-size: 14px;
+      color: #cbd5f5;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .footer-section a:hover {
+      color: #38bdf8;
+    }
+
+    .social-links a {
+      display: inline-block;
+      margin-right: 10px;
+      margin-top: 5px;
+    }
+
+    .social-links img {
+      width: 24px;
+      height: 24px;
+      opacity: 0.8;
+      transition: opacity 0.2s ease;
+    }
+
+    .social-links img:hover {
+      opacity: 1;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 15px;
+      border-top: 1px solid #1e293b;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+
+    /* ===============================
+       RESPONSIVE
+       =============================== */
     @media (max-width: 768px) {
       .site-header {
         flex-direction: column;
@@ -108,39 +253,82 @@
 
 <header class="site-header">
   <div class="logo">
+    <img src="{% static 'images/logo.png' %}" alt="MyShop Logo">
     <a href="{% url 'home' %}">MyShop</a>
   </div>
 
-    <nav>
-    <!-- HOME: always visible -->
+  <nav>
     <a href="{% url 'home' %}">Home</a>
 
     {% if request.user.is_authenticated %}
-        <a href="{% url 'accounts:dashboard' %}">Dashboard</a>
-        <a href="{% url 'orders:orders_list' %}">My Orders</a>
-        <a href="{% url 'accounts:logout' %}">Logout</a>
+      <a href="{% url 'accounts:dashboard' %}">Dashboard</a>
+      <a href="{% url 'orders:orders_list' %}">My Orders</a>
+      <a href="{% url 'accounts:logout' %}">Logout</a>
     {% else %}
-        <a href="{% url 'accounts:login' %}">Login</a>
-        <a href="{% url 'accounts:register' %}">Register</a>
+      <a href="{% url 'accounts:login' %}">Login</a>
+      <a href="{% url 'accounts:register' %}">Register</a>
     {% endif %}
 
-    <!-- CHECKOUT BUTTON: show only if cart has items -->
     {% if cart_count > 0 %}
-        <a href="{% url 'orders:checkout' %}" class="checkout-btn">
+      <a href="{% url 'orders:checkout' %}" class="checkout-btn">
         Checkout ({{ cart_count }})
-        </a>
+      </a>
     {% endif %}
-    </nav>
-
+  </nav>
 </header>
 
+{% if messages %}
+<div class="messages-container">
+  {% for message in messages %}
+    <div class="message {{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+</div>
+{% endif %}
 
 <main class="container">
   {% block content %}{% endblock %}
 </main>
 
 <footer class="site-footer">
-  <p>© {{ now|date:"Y" }} MyShop. All rights reserved.</p>
+  <div class="footer-grid">
+
+    <div class="footer-section">
+      <div class="footer-brand">
+        <img src="{% static 'images/logo.png' %}" alt="MyShop Logo">
+        <span>MyShop</span>
+      </div>
+      <p>Your trusted online store for quality products and fast delivery.</p>
+    </div>
+
+    <div class="footer-section">
+      <h4>Contact</h4>
+      <p>Email: support@myshop.com</p>
+      <p>Phone: +233 000 000 000</p>
+      <p>Location: Accra, Ghana</p>
+    </div>
+
+    <div class="footer-section">
+      <h4>Quick Links</h4>
+      <a href="{% url 'home' %}">Home</a>
+      <a href="{% url 'products:product_list' %}">Shop</a>
+      <a href="{% url 'orders:orders_list' %}">Orders</a>
+      <a href="#">Privacy Policy</a>
+    </div>
+
+    <div class="footer-section">
+      <h4>Follow Us</h4>
+      <div class="social-links">
+        <a href="#"><img src="{% static 'images/facebook.png' %}" alt="Facebook"></a>
+        <a href="#"><img src="{% static 'images/twitter.png' %}" alt="Twitter"></a>
+        <a href="#"><img src="{% static 'images/instagram.png' %}" alt="Instagram"></a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © {{ now|date:"Y" }} MyShop. All rights reserved.
+  </div>
 </footer>
 
 </body>

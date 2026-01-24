@@ -8,13 +8,36 @@ from cart.cart import CartManager
 from .models import Order, OrderItem
 from .forms import CheckoutForm
 
+
+
 def checkout_view(request):
     cart_manager = CartManager(request)
     cart = cart_manager.get_cart()
 
+    # 🚫 Block checkout if cart is empty
     if not cart or not cart.items.exists():
         messages.warning(request, "Your cart is empty.")
         return redirect('cart:cart_detail')
+
+    # 🚫 HARD BLOCK: OUT-OF-STOCK ITEMS
+    for item in cart.items.select_related('product'):
+        if item.product.stock <= 0:
+            messages.error(
+                request,
+                f"{item.product.name} is out of stock. "
+                "Please remove it from your cart."
+            )
+            return redirect('cart:cart_detail')
+
+        if item.quantity > item.product.stock:
+            messages.error(
+                request,
+                f"Not enough stock for {item.product.name}. "
+                f"Available: {item.product.stock}"
+            )
+            return redirect('cart:cart_detail')
+
+    # ⛔ If blocked above, checkout NEVER starts
 
     if request.method == 'POST':
         form = CheckoutForm(request.POST)
@@ -26,6 +49,7 @@ def checkout_view(request):
                 user=request.user if request.user.is_authenticated else None,
                 full_name=form.cleaned_data['full_name'],
                 email=form.cleaned_data['email'],
+                phone_number=form.cleaned_data['phone_number'],
                 address=form.cleaned_data['address'],
                 total_price=total_price,
                 status='pending',
@@ -40,10 +64,10 @@ def checkout_view(request):
                     custom_data=item.custom_data
                 )
 
-            # Clear cart
+            # 🧹 Clear cart (stock is NOT touched here)
             cart.items.all().delete()
 
-            return redirect('payments:choose_method', order.id)
+            return redirect('orders:order_success', order.id)
 
     else:
         form = CheckoutForm()

@@ -30,9 +30,22 @@
 .stock.out { color: #dc2626; }
 
 /* BUTTONS */
-.btn { display: inline-block; padding: 12px 22px; border-radius: 6px; text-decoration: none; font-size: 15px; font-weight: 600; }
+.btn {
+  display: inline-block;
+  padding: 12px 22px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 600;
+}
 .btn.primary { background: #16a34a; color: white; }
 .btn.primary:hover { background: #15803d; }
+
+.btn.disabled {
+  background: #9ca3af;
+  color: #fff;
+  cursor: not-allowed;
+}
 
 /* RESPONSIVE */
 @media (max-width: 900px) {
@@ -42,6 +55,7 @@
 </style>
 
 <div class="product-detail">
+
   <!-- IMAGE SECTION -->
   <div class="product-images">
     {% if images %}
@@ -62,12 +76,54 @@
     <p class="price">GHS {{ product.price }}</p>
     <p class="description">{{ product.description }}</p>
 
-    {% if product.stock > 0 %}
-      <p class="stock in">In Stock ({{ product.stock }})</p>
-      <a href="{% url 'cart:add_to_cart' product.id %}" class="btn primary">Add to Cart</a>
+    {% if product.stock > 0 and product.is_active %}
+      <p class="stock in" id="stock-text">
+        Only <strong>{{ product.stock }}</strong> left in stock 🔥
+      </p>
+
+      <a href="{% url 'cart:add_to_cart' product.id %}" class="btn primary" id="add-to-cart">
+        Add to Cart
+      </a>
     {% else %}
-      <p class="stock out">Out of Stock</p>
+      <p class="stock out" id="stock-text">Out of Stock</p>
+      <span class="btn disabled" id="add-to-cart">Unavailable</span>
     {% endif %}
   </div>
+
 </div>
+
+<script>
+setInterval(function () {
+  fetch(window.location.href, {
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest'
+    }
+  })
+  .then(res => res.json())
+  .then(data => {
+    const stockText = document.getElementById('stock-text');
+    const addBtn = document.getElementById('add-to-cart');
+
+    if (!stockText || !addBtn) return;
+
+    if (data.stock > 0 && data.is_active) {
+      stockText.innerHTML = `Only <strong>${data.stock}</strong> left in stock 🔥`;
+      stockText.className = 'stock in';
+
+      addBtn.innerText = 'Add to Cart';
+      addBtn.className = 'btn primary';
+      addBtn.removeAttribute('disabled');
+    } else {
+      stockText.innerText = 'Out of Stock';
+      stockText.className = 'stock out';
+
+      addBtn.innerText = 'Unavailable';
+      addBtn.className = 'btn disabled';
+      addBtn.setAttribute('disabled', true);
+    }
+  });
+}, 10000); // ⏱ every 10 seconds
+</script>
+
+
 {% endblock %}

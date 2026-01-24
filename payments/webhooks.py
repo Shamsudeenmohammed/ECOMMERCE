@@ -4,8 +4,12 @@ import json
 from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.db import transaction
+
 from orders.models import Order
+from products.models import Product
 from .models import Payment
+
 
 @csrf_exempt
 def paystack_webhook(request):
@@ -23,19 +27,44 @@ def paystack_webhook(request):
 
     event = json.loads(payload)
 
-    if event['event'] == 'charge.success':
+    if event.get('event') == 'charge.success':
         reference = event['data']['reference']
         metadata = event['data']['metadata']
         order_id = metadata.get('order_id')
 
         try:
-            payment = Payment.objects.get(reference=reference)
-            payment.status = 'succeeded'
-            payment.save()
+            with transaction.atomic():
+                payment = Payment.objects.select_for_update().get(reference=reference)
 
-            order = Order.objects.get(id=order_id)
-            order.status = 'paid'
-            order.save()
+                # 🔒 Prevent double processing
+                if payment.status == 'succeeded':
+                    return HttpResponse(status=200)
+
+                order = Order.objects.select_for_update().get(id=order_id)
+
+                # 🔻 Reduce stock
+                for item in order.items.select_related('product'):
+                    product = item.product
+
+                    if product.stock < item.quantity:
+                        # Safety fallback (should never happen)
+                        return HttpResponse(status=400)
+
+                    product.stock -= item.quantity
+
+                    # 🚨 Mark out of stock
+                    if product.stock == 0:
+                        product.is_active = False
+
+                    product.save(update_fields=['stock', 'is_active'])
+
+                # ✅ Mark payment & order as successful
+                payment.status = 'succeeded'
+                payment.save(update_fields=['status'])
+
+                order.status = 'paid'
+                order.save(update_fields=['status'])
+
         except (Payment.DoesNotExist, Order.DoesNotExist):
             pass
 

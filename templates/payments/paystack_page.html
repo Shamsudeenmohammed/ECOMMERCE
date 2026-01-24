@@ -1,10 +1,23 @@
 {% extends "base.html" %}
+{% load static %}
+
 {% block title %}Pay for Order #{{ order.id }}{% endblock %}
 
 {% block content %}
 
 <div class="payment-wrapper">
     <div class="payment-card">
+
+        <!-- ===== DJANGO MESSAGES ===== -->
+        {% if messages %}
+            <div class="messages-container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
 
         <h2 class="payment-title">Complete Your Payment</h2>
         <p class="payment-subtitle">
@@ -27,13 +40,15 @@
 
         <p class="payment-note">
             You will be redirected to Paystack to complete your payment securely.
+            <br>
+            <strong>Do not close or refresh the page</strong> during payment.
         </p>
 
     </div>
 </div>
 
 <style>
-/* ===== Payment Page Wrapper ===== */
+/* ===== Wrapper ===== */
 .payment-wrapper {
     min-height: 70vh;
     display: flex;
@@ -52,6 +67,44 @@
     border-radius: 12px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
     text-align: center;
+}
+
+/* ===== Messages ===== */
+.messages-container {
+    margin-bottom: 20px;
+}
+
+.alert {
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-align: left;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #10b981;
+}
+
+.alert-error {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #ef4444;
+}
+
+.alert-warning {
+    background: #fffbeb;
+    color: #92400e;
+    border: 1px solid #f59e0b;
+}
+
+.alert-info {
+    background: #eff6ff;
+    color: #1e40af;
+    border: 1px solid #3b82f6;
 }
 
 /* ===== Titles ===== */
@@ -88,7 +141,7 @@
     color: #16a34a;
 }
 
-/* ===== Paystack Button ===== */
+/* ===== Button ===== */
 .paystack-btn {
     width: 100%;
     padding: 14px;

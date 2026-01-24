@@ -1,9 +1,15 @@
 {% extends "base.html" %}
+{% load static %}
+
 {% block title %}Home{% endblock %}
 
 {% block content %}
 
 <style>
+/* ===============================
+   HOME PAGE – WHITENOISE SAFE
+   =============================== */
+
 /* ===== HERO SECTION ===== */
 .hero {
   background: linear-gradient(135deg, #2563eb, #1e40af);
@@ -71,7 +77,7 @@
   box-shadow: 0 20px 30px rgba(0,0,0,0.15);
 }
 
-/* ===== FEATURED PRODUCTS ===== */
+/* ===== PRODUCTS ===== */
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -97,6 +103,7 @@
   object-fit: cover;
   border-radius: 10px;
   margin-bottom: 10px;
+  background: #f3f4f6;
 }
 
 .product-card h4 {
@@ -161,9 +168,13 @@
     {% for product in featured_products %}
       <div class="product-card">
 
-        {% if product.images.first %}
-          <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}">
-        {% endif %}
+        {% with image=product.images.first %}
+          {% if image %}
+            <img src="{{ image.image.url }}" alt="{{ product.name }}">
+          {% else %}
+            <img src="{% static 'images/placeholder.png' %}" alt="No image">
+          {% endif %}
+        {% endwith %}
 
         <h4>{{ product.name }}</h4>
         <p class="price">GHS {{ product.price }}</p>

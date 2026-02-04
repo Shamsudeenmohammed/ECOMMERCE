@@ -69,6 +69,8 @@ else:
 
 INSTALLED_APPS = [
     'jazzmin',
+    'ecommerce.apps.EcommerceConfig',
+    'whitenoise.runserver_nostatic',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

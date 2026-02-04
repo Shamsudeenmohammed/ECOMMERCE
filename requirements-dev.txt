@@ -1,0 +1,10 @@
+ipython
+django-debug-toolbar
+django-extensions
+selenium
+matplotlib
+pandas
+numpy
+pyinstaller
+auto-py-to-exe
+virtualenvwrapper-win

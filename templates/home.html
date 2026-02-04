@@ -170,7 +170,7 @@
 
         {% with image=product.images.first %}
           {% if image %}
-            <img src="{{ image.url }}" alt="{{ product.name }}">
+            <img src="{{ image.image.url }}" alt="{{ product.name }}">
           {% else %}
             <img src="{% static 'images/placeholder.png' %}" alt="No image">
           {% endif %}

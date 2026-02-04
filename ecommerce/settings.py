@@ -25,9 +25,9 @@ SECRET_KEY = os.environ.get(
 # ==================================================
 # HOSTS & CSRF
 # ==================================================
-
+ALLOWED_HOSTS = ['https://ecommerce-ejr2.onrender.com','localhost', '127.0.0.1', '0.0.0.0']
 if DEBUG:
-    ALLOWED_HOSTS = ['https://ecommerce-ejr2.onrender.com','localhost', '127.0.0.1', '0.0.0.0']
+    ALLOWED_HOSTS = ALLOWED_HOSTS + ['*']
 else:
     ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
 

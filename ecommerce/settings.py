@@ -16,7 +16,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 't')
 IS_PRODUCTION = not DEBUG
-
+DJANGO_SECRET_KEY = "_fwy_zgq&8a^=)af*kx8fj!s@v5mo#b(n@xbl&79)#g^uuiorm"
 SECRET_KEY = os.environ.get(
     'DJANGO_SECRET_KEY',
     get_random_secret_key() if DEBUG else None
